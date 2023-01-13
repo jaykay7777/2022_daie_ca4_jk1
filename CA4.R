@@ -181,7 +181,7 @@ result
 # 
 # result <-  dbGetQuery(conn, "SELECT AVG(hp) FROM mtcars")
 # result
-
+#issue with push
 # Execute a query with no result
 
 result <-  dbGetQuery(conn, "SELECT * FROM ca4")
