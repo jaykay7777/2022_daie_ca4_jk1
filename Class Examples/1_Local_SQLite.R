@@ -44,6 +44,7 @@ dbListFields(conn, "mtcars")
 
 # CRUD - Create, Rename, Update, Delete
 
+
 # result <-  dbGetQuery(conn, "SELECT * FROM mtcars")
 # result
 
