@@ -1,5 +1,6 @@
 ---
-title: "CA4 SQL code to select from the database"
+title: "CA4 - RDBMS"
+subtitle: "SQL code to select from the database"
 author: "Jim Kealy"
 date: "17-01-2023"
 output:
@@ -34,39 +35,61 @@ library(dplyr)
 
 conn <- dbConnect(RSQLite::SQLite(), "daie_ca4_data.sqlite")
 
+#list all tables in the database
+dbListTables(conn)
+
+
 # list all team members
 result <-  dbGetQuery(conn, "SELECT * FROM TeamMembers")
 result
 
-
-# result <-  dbGetQuery(conn, "SELECT wt, disp, mpg FROM mtcars")
-# result
-
-# result <-  dbGetQuery(conn, "SELECT * FROM mtcars WHERE mpg >= 18 AND mpg <= 22")
-# result
-
-# result <-  dbGetQuery(conn, "SELECT * FROM mtcars WHERE mpg >= 18 AND mpg <= 22 ORDER BY hp ASC LIMIT 4")
-# result
-
-# result <-  dbGetQuery(conn, "SELECT * FROM mtcars WHERE mpg >= 18 AND mpg <= 22 ORDER BY hp ASC LIMIT 4")
-# result
-
-# result <-  dbGetQuery(conn, "SELECT COUNT(mpg) FROM mtcars WHERE mpg > 25")
-# result
-# 
-# result <-  dbGetQuery(conn, "SELECT AVG(hp) FROM mtcars")
-# result
-#issue with push
-# Execute a query with no result
-
-result <-  dbGetQuery(conn, "SELECT * FROM ca4")
-result 
-
-dbExecute(conn, "DELETE FROM ca4 WHERE mpg <= 20")
-
-result <-  dbGetQuery(conn, "SELECT * FROM ca4")
+# list all team members whose last name begins with M or K
+result <-  dbGetQuery(conn, "SELECT * FROM TeamMembers where lastname LIKE 'M%' OR lastname LIKE 'K%' ORDER BY lastname ASC")
 result
 
+# list name and status of the work items for team member id 1
+result <-  dbGetQuery(conn, "SELECT name, status FROM WorkItem where TeamMembers_id=1")
+result
+
+
+# list the distinct work items for all assets
+result <-  dbGetQuery(conn, "SELECT DISTINCT Workitem_id FROM Asset")
+result
+
+#W3 schools inner join example
+#SELECT column_name(s)
+#FROM table1
+#INNER JOIN table2
+#ON table1.column_name = table2.column_name;
+
+# list all people's work items for all team members
+result <-  dbGetQuery(conn, "SELECT * FROM TeamMembers INNER JOIN WorkItem WHERE TeamMembers.id = WorkItem.TeamMembers_id ORDER BY TeamMembers.id ASC")
+result
+
+# list all people's work items for all team members with ongoing work
+result <-  dbGetQuery(conn, "SELECT * FROM TeamMembers INNER JOIN WorkItem WHERE TeamMembers.id = WorkItem.TeamMembers_id AND WorkItem.status = 'ongoing' ORDER BY TeamMembers.id ASC")
+result
+
+# count all people's work items for all team members with ongoing work
+result <-  dbGetQuery(conn, "SELECT COUNT(*) FROM TeamMembers INNER JOIN WorkItem WHERE TeamMembers.id = WorkItem.TeamMembers_id AND WorkItem.status = 'ongoing' ORDER BY TeamMembers.id ASC")
+result
+
+# list all people's work items for all team members with completed work
+result <-  dbGetQuery(conn, "SELECT * FROM TeamMembers INNER JOIN WorkItem WHERE TeamMembers.id = WorkItem.TeamMembers_id AND WorkItem.status = 'completed' ORDER BY TeamMembers.id ASC")
+result
+
+# count all people's work items for all team members with completed work
+result <-  dbGetQuery(conn, "SELECT COUNT(*) FROM TeamMembers INNER JOIN WorkItem WHERE TeamMembers.id = WorkItem.TeamMembers_id AND WorkItem.status = 'completed' ORDER BY TeamMembers.id ASC")
+result
+
+# list all people's work items for all team members whose work is associated with an asset
+result <-  dbGetQuery(conn, "SELECT * FROM TeamMembers INNER JOIN WorkItem WHERE TeamMembers.id = WorkItem.TeamMembers_id AND WorkItem.id=(SELECT DISTINCT Workitem_id FROM Asset)")
+result
+
+# list all projects started since January 1st this year
+result <-  dbGetQuery(conn, "SELECT * FROM Project WHERE startDate >= '2023-01-01'")
+result
+ 
 # Do NOT forget to disconnect - otherwise we may hit a remote connection limit
 
 dbDisconnect(conn)

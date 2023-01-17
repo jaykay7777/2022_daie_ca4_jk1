@@ -1,5 +1,6 @@
 ---
-title: "CA4 SQL code to generate and populate the database"
+title: "CA4 - RDBMS"
+subtitle: "SQL code to generate and populate the database"
 author: "Jim Kealy"
 date: "17-01-2023"
 output:
@@ -34,7 +35,7 @@ library(dplyr)
 
 conn <- dbConnect(RSQLite::SQLite(), "daie_ca4_data.sqlite")
 
-# Add table data to the SQLite DB
+# Add tables to the SQLite DB
 
 dbExecute(conn, "CREATE TABLE TeamMembers (
     id integer NOT NULL CONSTRAINT TeamMembers_pk PRIMARY KEY AUTOINCREMENT,
@@ -86,8 +87,8 @@ dbExecute(conn, "CREATE TABLE ProjectMembers (
 # view data within RStudio
 # View(mtcars)
 
-dbListTables(conn)
-dbListFields(conn, "TeamMembers")
+#dbListTables(conn)
+#dbListFields(conn, "TeamMembers")
 
 # Query and store the results
 
