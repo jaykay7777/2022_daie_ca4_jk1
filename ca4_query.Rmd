@@ -1,0 +1,79 @@
+---
+title: "CA4 SQL code to select from the database"
+output:
+  html_document:
+    df_print: paged
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+
+## Clear console on each execute and set chunk default to not show code
+
+cat('\014')
+
+## Download and load libraries
+
+if(!require("DBI"))
+  install.packages("DBI")
+if(!require("dplyr"))
+  install.packages("dplyr")
+# if(!require("readr"))
+#   install.packages("readr")
+
+library(DBI)
+#library(readr)
+library(dplyr)
+
+# Connect (and create) a new local SQLite DB
+
+conn <- dbConnect(RSQLite::SQLite(), "daie_ca4_data.sqlite")
+
+result <-  dbGetQuery(conn, "SELECT * FROM ProjectMembers")
+result
+
+# result <-  dbGetQuery(conn, "SELECT * FROM mtcars")
+# result
+
+# result <-  dbGetQuery(conn, "SELECT wt, disp, mpg FROM mtcars")
+# result
+
+# result <-  dbGetQuery(conn, "SELECT * FROM mtcars WHERE mpg >= 18 AND mpg <= 22")
+# result
+
+# result <-  dbGetQuery(conn, "SELECT * FROM mtcars WHERE mpg >= 18 AND mpg <= 22 ORDER BY hp ASC LIMIT 4")
+# result
+
+# result <-  dbGetQuery(conn, "SELECT * FROM mtcars WHERE mpg >= 18 AND mpg <= 22 ORDER BY hp ASC LIMIT 4")
+# result
+
+# result <-  dbGetQuery(conn, "SELECT COUNT(mpg) FROM mtcars WHERE mpg > 25")
+# result
+# 
+# result <-  dbGetQuery(conn, "SELECT AVG(hp) FROM mtcars")
+# result
+#issue with push
+# Execute a query with no result
+
+result <-  dbGetQuery(conn, "SELECT * FROM ca4")
+result 
+
+dbExecute(conn, "DELETE FROM ca4 WHERE mpg <= 20")
+
+result <-  dbGetQuery(conn, "SELECT * FROM ca4")
+result
+
+# Do NOT forget to disconnect - otherwise we may hit a remote connection limit
+
+dbDisconnect(conn)
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
