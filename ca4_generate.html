@@ -9,6 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Jim Kealy" />
 
 
 <title>CA4 SQL code to generate and populate the database</title>
@@ -1627,6 +1628,8 @@ pre code {
 
 <h1 class="title toc-ignore">CA4 SQL code to generate and populate the
 database</h1>
+<h4 class="author">Jim Kealy</h4>
+<h4 class="date">17-01-2023</h4>
 
 </div>
 
@@ -1673,64 +1676,69 @@ conn &lt;- dbConnect(RSQLite::SQLite(), &quot;daie_ca4_data.sqlite&quot;)
 # Add table data to the SQLite DB
 
 
+dbExecute(conn, &quot;DROP TABLE IF EXISTS ProjectMembers&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;DROP TABLE IF EXISTS Library&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;DROP TABLE IF EXISTS Project&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;DROP TABLE IF EXISTS Asset&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;DROP TABLE IF EXISTS WorkItem&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;DROP TABLE IF EXISTS TeamMembers&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;CREATE TABLE TeamMembers (
+    id integer NOT NULL CONSTRAINT TeamMembers_pk PRIMARY KEY AUTOINCREMENT,
+    firstname varchar(32) NOT NULL,
+    lastname varchar(128) NOT NULL,
+    email varchar(128) NOT NULL
+)&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;CREATE TABLE WorkItem (
+    id integer NOT NULL CONSTRAINT WorkItem_pk PRIMARY KEY AUTOINCREMENT,
+    name varchar(128) NOT NULL,
+    status varchar(50) NOT NULL,
+    TeamMembers_id integer NOT NULL
+)&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;CREATE TABLE Asset (
+    id integer NOT NULL CONSTRAINT Asset_pk PRIMARY KEY AUTOINCREMENT,
+    type varchar(50) NOT NULL,
+    format varchar(50) NOT NULL,
+    WorkItem_id integer NOT NULL
+)&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;CREATE TABLE Project (
+  id integer NOT NULL CONSTRAINT Project_pk PRIMARY KEY AUTOINCREMENT,
+  name varchar(128) NOT NULL,
+  startDate date NOT NULL,
+  endDate date NOT NULL
+)&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;CREATE TABLE Library (
+    id integer NOT NULL CONSTRAINT Library_pk PRIMARY KEY AUTOINCREMENT,
+    name varchar(128) NOT NULL,
+    Asset_id integer NOT NULL,
+    Project_id integer NOT NULL
+)&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>#getting error Error: table ProjectMembers already exists. need to watch more tutorials
 
-#dbExecute(conn, &quot;CREATE TABLE TeamMembers (
-#    id integer NOT NULL CONSTRAINT TeamMembers_pk PRIMARY KEY AUTOINCREMENT,
-#    firstname varchar(32) NOT NULL,
-#    lastname varchar(128) NOT NULL,
-#    email varchar(128) NOT NULL
-#)&quot;)
-
-#dbExecute(conn, &quot;CREATE TABLE WorkItem (
-#    id integer NOT NULL CONSTRAINT WorkItem_pk PRIMARY KEY AUTOINCREMENT,
-#    name varchar(128) NOT NULL,
-#    status varchar(50) NOT NULL,
-#    TeamMembers_id integer NOT NULL
-#)&quot;)
-
-#dbExecute(conn, &quot;CREATE TABLE Asset (
-#    id integer NOT NULL CONSTRAINT Asset_pk PRIMARY KEY AUTOINCREMENT,
-#    type varchar(50) NOT NULL,
-#    format varchar(50) NOT NULL,
-#    WorkItem_id integer NOT NULL
-#)&quot;)
-
-#dbExecute(conn, &quot;CREATE TABLE Project (
-#  id integer NOT NULL CONSTRAINT Project_pk PRIMARY KEY AUTOINCREMENT,
-#  name varchar(128) NOT NULL,
-#  startDate date NOT NULL,
-#  endDate date NOT NULL
-#)&quot;)
-
-
-#dbExecute(conn, &quot;CREATE TABLE Library (
-#    id integer NOT NULL CONSTRAINT Library_pk PRIMARY KEY AUTOINCREMENT,
-#    name varchar(128) NOT NULL,
-#    Asset_id integer NOT NULL,
-#    Project_id integer NOT NULL
-#)&quot;)
-
-#getting error Error: table ProjectMembers already exists. need to watch more tutorials
-
-#dbExecute(conn, &quot;CREATE TABLE ProjectMembers (
-#    TeamMembers_id integer NOT NULL,
-#    Project_id integer NOT NULL,
-#    CONSTRAINT ProjectMembers_pk PRIMARY KEY (TeamMembers_id,Project_id)
-#)&quot;)
-
-
-
-#dbWriteTable(conn, &quot;ca4&quot;, mtcars, overwrite = T, append = F)
-
-# Test the DB
+dbExecute(conn, &quot;CREATE TABLE ProjectMembers (
+    TeamMembers_id integer NOT NULL,
+    Project_id integer NOT NULL,
+    CONSTRAINT ProjectMembers_pk PRIMARY KEY (TeamMembers_id,Project_id)
+)&quot;)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code># Test the DB
 
 # view data within RStudio
 # View(mtcars)
 
 dbListTables(conn)</code></pre>
 <pre><code>## [1] &quot;Asset&quot;           &quot;Library&quot;         &quot;Project&quot;         &quot;ProjectMembers&quot; 
-## [5] &quot;TeamMembers&quot;     &quot;WorkItem&quot;        &quot;ca4&quot;             &quot;mtcars&quot;         
-## [9] &quot;sqlite_sequence&quot;</code></pre>
+## [5] &quot;TeamMembers&quot;     &quot;WorkItem&quot;        &quot;mtcars&quot;          &quot;sqlite_sequence&quot;</code></pre>
 <pre class="r"><code>dbListFields(conn, &quot;TeamMembers&quot;)</code></pre>
 <pre><code>## [1] &quot;id&quot;        &quot;firstname&quot; &quot;lastname&quot;  &quot;email&quot;</code></pre>
 <pre class="r"><code># Query and store the results
@@ -1739,87 +1747,115 @@ dbListTables(conn)</code></pre>
 
 #populate the database tables
 
-#dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;John&#39;, &#39;Murphy&#39;, &#39;jm@hotmail.com&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Rebecca&#39;, &#39;Kelly&#39;, &#39;rk@hotmail.com&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Bill&#39;, &#39;Murphy&#39;, &#39;bm@hotmail.com&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Dave&#39;, &#39;Foran&#39;, &#39;df@hotmail.com&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Jane&#39;, &#39;Kean&#39;, &#39;jk@hotmail.com&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Helen&#39;, &#39;Carter&#39;, &#39;hc@hotmail.com&#39;)&quot;)
 
-result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM TeamMembers&quot;)
+dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;John&#39;, &#39;Murphy&#39;, &#39;jm@hotmail.com&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Rebecca&#39;, &#39;Kelly&#39;, &#39;rk@hotmail.com&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Bill&#39;, &#39;Murphy&#39;, &#39;bm@hotmail.com&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Dave&#39;, &#39;Foran&#39;, &#39;df@hotmail.com&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Jane&#39;, &#39;Kean&#39;, &#39;jk@hotmail.com&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO TeamMembers (firstname, lastname, email) VALUES (&#39;Helen&#39;, &#39;Carter&#39;, &#39;hc@hotmail.com&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM TeamMembers&quot;)
 result</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["firstname"],"name":[2],"type":["chr"],"align":["left"]},{"label":["lastname"],"name":[3],"type":["chr"],"align":["left"]},{"label":["email"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"5","2":"John","3":"Murphy","4":"jm@hotmail.com"},{"1":"6","2":"Rebecca","3":"Kelly","4":"rk@hotmail.com"},{"1":"7","2":"Bill","3":"Murphy","4":"bm@hotmail.com"},{"1":"8","2":"Dave","3":"Foran","4":"df@hotmail.com"},{"1":"9","2":"Jane","3":"Kean","4":"jk@hotmail.com"},{"1":"10","2":"Helen","3":"Carter","4":"hc@hotmail.com"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["firstname"],"name":[2],"type":["chr"],"align":["left"]},{"label":["lastname"],"name":[3],"type":["chr"],"align":["left"]},{"label":["email"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"John","3":"Murphy","4":"jm@hotmail.com"},{"1":"2","2":"Rebecca","3":"Kelly","4":"rk@hotmail.com"},{"1":"3","2":"Bill","3":"Murphy","4":"bm@hotmail.com"},{"1":"4","2":"Dave","3":"Foran","4":"df@hotmail.com"},{"1":"5","2":"Jane","3":"Kean","4":"jk@hotmail.com"},{"1":"6","2":"Helen","3":"Carter","4":"hc@hotmail.com"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>#dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;truck&#39;, &#39;ongoing&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;road&#39;, &#39;ongoing&#39;, 3)&quot;)
-#dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;truck&#39;, &#39;completed&#39;, 4)&quot;)
-#dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;car&#39;, &#39;completed&#39;, 2)&quot;)
-#dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;road&#39;, &#39;ongoing&#39;, 5)&quot;)
-#dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;truck&#39;, &#39;ongoing&#39;, 6)&quot;)
-
-result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM WorkItem&quot;)
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;truck&#39;, &#39;ongoing&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;road&#39;, &#39;ongoing&#39;, 3)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;truck&#39;, &#39;completed&#39;, 4)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;car&#39;, &#39;completed&#39;, 2)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;road&#39;, &#39;ongoing&#39;, 5)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO WorkItem (name, status, TeamMembers_id) VALUES (&#39;truck&#39;, &#39;ongoing&#39;, 6)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM WorkItem&quot;)
 result</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["status"],"name":[3],"type":["chr"],"align":["left"]},{"label":["TeamMembers_id"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"truck","3":"ongoing","4":"1"},{"1":"2","2":"road","3":"ongoing","4":"3"},{"1":"3","2":"truck","3":"completed","4":"4"},{"1":"4","2":"car","3":"completed","4":"2"},{"1":"5","2":"road","3":"ongoing","4":"5"},{"1":"6","2":"truck","3":"ongoing","4":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>#dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;3d&#39;, &#39;blender&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;3d&#39;, &#39;blender&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;2d&#39;, &#39;blender&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;3d&#39;, &#39;blender&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;composit&#39;, &#39;blender&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;Concept&#39;, &#39;blender&#39;, 1)&quot;)
-
-result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM Asset&quot;)
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;3d&#39;, &#39;blender&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;3d&#39;, &#39;blender&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;2d&#39;, &#39;blender&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;3d&#39;, &#39;blender&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;composit&#39;, &#39;blender&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Asset (type, format, WorkItem_id) VALUES (&#39;Concept&#39;, &#39;blender&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM Asset&quot;)
 result</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["format"],"name":[3],"type":["chr"],"align":["left"]},{"label":["WorkItem_id"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"3d","3":"blender","4":"1"},{"1":"2","2":"3d","3":"blender","4":"1"},{"1":"3","2":"2d","3":"blender","4":"1"},{"1":"4","2":"3d","3":"blender","4":"1"},{"1":"5","2":"composit","3":"blender","4":"1"},{"1":"6","2":"Concept","3":"blender","4":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>#dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene1&#39;, &#39;2023-01-01&#39;, &#39;2023-02-01&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene1&#39;, &#39;2023-01-01&#39;, &#39;2023-02-01&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene2&#39;, &#39;2023-02-01&#39;, &#39;2023-03-01&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene1&#39;, &#39;2023-01-01&#39;, &#39;2023-02-01&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene2&#39;, &#39;2023-02-01&#39;, &#39;2023-03-01&#39;)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene2&#39;, &#39;2023-02-01&#39;, &#39;2023-03-01&#39;)&quot;)
-
-
-result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM Project&quot;)
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene1&#39;, &#39;2023-01-01&#39;, &#39;2023-02-01&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene1&#39;, &#39;2023-01-01&#39;, &#39;2023-02-01&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene2&#39;, &#39;2023-02-01&#39;, &#39;2023-03-01&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene1&#39;, &#39;2023-01-01&#39;, &#39;2023-02-01&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene2&#39;, &#39;2023-02-01&#39;, &#39;2023-03-01&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Project (name, startDate, endDate) VALUES (&#39;scene2&#39;, &#39;2023-02-01&#39;, &#39;2023-03-01&#39;)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM Project&quot;)
 result</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["startDate"],"name":[3],"type":["chr"],"align":["left"]},{"label":["endDate"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"scene1","3":"2023-01-01","4":"2023-02-01"},{"1":"2","2":"scene1","3":"2023-01-01","4":"2023-02-01"},{"1":"3","2":"scene2","3":"2023-02-01","4":"2023-03-01"},{"1":"4","2":"scene1","3":"2023-01-01","4":"2023-02-01"},{"1":"5","2":"scene2","3":"2023-02-01","4":"2023-03-01"},{"1":"6","2":"scene2","3":"2023-02-01","4":"2023-03-01"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>#dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;1&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;2&#39;, 2)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;1&#39;, 2)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;3&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;3&#39;, 2)&quot;)
-#dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;2&#39;, 1)&quot;)
-
-result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM Library&quot;)
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;1&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;2&#39;, 2)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;1&#39;, 2)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;3&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;3&#39;, 2)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO Library (name, Asset_id, Project_id) VALUES (&#39;roadscene&#39;, &#39;2&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>result &lt;-  dbGetQuery(conn, &quot;SELECT * FROM Library&quot;)
 result</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["id"],"name":[1],"type":["int"],"align":["right"]},{"label":["name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Asset_id"],"name":[3],"type":["int"],"align":["right"]},{"label":["Project_id"],"name":[4],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"roadscene","3":"1","4":"1"},{"1":"2","2":"roadscene","3":"2","4":"2"},{"1":"3","2":"roadscene","3":"1","4":"2"},{"1":"4","2":"roadscene","3":"3","4":"1"},{"1":"5","2":"roadscene","3":"3","4":"2"},{"1":"6","2":"roadscene","3":"2","4":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>#dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;1&#39;, 2)&quot;)
-#dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;2&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;3&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;4&#39;, 2)&quot;)
-#dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;5&#39;, 1)&quot;)
-#dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;6&#39;, 2)&quot;)
-
-
-
-# Do NOT forget to disconnect - otherwise we may hit a remote connection limit
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;1&#39;, 2)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;2&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;3&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;4&#39;, 2)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;5&#39;, 1)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>dbExecute(conn, &quot;INSERT INTO ProjectMembers (TeamMembers_id, Project_id) VALUES (&#39;6&#39;, 2)&quot;)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code># Do NOT forget to disconnect - otherwise we may hit a remote connection limit
 
 dbDisconnect(conn)</code></pre>
 <p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the

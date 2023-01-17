@@ -1,5 +1,7 @@
 ---
 title: "CA4 SQL code to select from the database"
+author: "Jim Kealy"
+date: "17-01-2023"
 output:
   html_document:
     df_print: paged
@@ -32,11 +34,10 @@ library(dplyr)
 
 conn <- dbConnect(RSQLite::SQLite(), "daie_ca4_data.sqlite")
 
-result <-  dbGetQuery(conn, "SELECT * FROM ProjectMembers")
+# list all team members
+result <-  dbGetQuery(conn, "SELECT * FROM TeamMembers")
 result
 
-# result <-  dbGetQuery(conn, "SELECT * FROM mtcars")
-# result
 
 # result <-  dbGetQuery(conn, "SELECT wt, disp, mpg FROM mtcars")
 # result
